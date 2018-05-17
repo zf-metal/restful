@@ -34,8 +34,7 @@
     "zendframework/zend-mvc-console": "^1.1",
     "doctrine/doctrine-orm-module": "^1.0",
     "gedmo/doctrine-extensions": "^2.4.24",
-    "zf-metal/commons": "^1.0.0",
-    "Indaxia/doctrine-orm-transformations": "2.*"
+    "zf-metal/commons": "^1.0.0"
   },
   "autoload": {
     "psr-4": {

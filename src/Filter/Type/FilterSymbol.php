@@ -92,10 +92,12 @@ class FilterSymbol extends AbstractFilter implements FilterInterface
         if (!$this->equal()) {
             if (!$this->greater()) {
                 if ((!$this->less())) {
+                    if(!$this->between()){
                     //TODO like, in, not like
                     //Default Equal
                     $this->operator = self::EQUAL;
                     $this->value =  $this->inputFilterValue;
+                    }
                 }
             }
         }

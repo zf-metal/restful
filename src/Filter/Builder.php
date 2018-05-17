@@ -16,9 +16,13 @@ use ZfMetal\Restful\Filter\Type\FilterSymbol;
 class Builder
 {
 
-    const TYPE_SIMPLE = FilterSimple::class;
-    const TYPE_SYMBOL = FilterSymbol::class;
-    const TYPE_CODE = FilterCode::class;
+    const TYPE_SIMPLE = "simple";
+    const TYPE_SYMBOL = "symbol";
+    const TYPE_CODE = "code";
+
+    const TYPE_SIMPLE_CLASS = FilterSimple::class;
+    const TYPE_SYMBOL_CLASS = FilterSymbol::class;
+    const TYPE_CODE_CLASS = FilterCode::class;
 
     /**
      * @var Filters
@@ -91,10 +95,20 @@ class Builder
 
     /**
      * @param mixed $type
+     * @throws \Exception
      */
     public function setType($type)
     {
-        $this->type = $type;
+        if($type == self::TYPE_SIMPLE){
+            $this->type = self::TYPE_SIMPLE_CLASS;
+        }else if($type == self::TYPE_SYMBOL){
+            $this->type = self::TYPE_SYMBOL_CLASS;
+        }else if($type == self::TYPE_CODE){
+            $this->type = self::TYPE_CODE_CLASS;
+        }else{
+            throw new \Exception("Filter Type Not Exists");
+        }
+
     }
 
 
