@@ -12,6 +12,8 @@ namespace ZfMetal\Restful\Filter\Type;
 abstract class AbstractFilter
 {
 
+    const IS_NOT_NULL = 'is not null';
+
     const EQUAL = '= %s';
     const NOT_EQUAL = '!= %s';
     const GREATER_EQUAL = '>= %s';

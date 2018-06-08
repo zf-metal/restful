@@ -3,7 +3,7 @@
   "description": "Doctrine restful for Zend Framework 3",
   "type": "library",
   "license": "MIT",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/cincarnato",
   "keywords": [
     "zf3"
@@ -31,6 +31,8 @@
     "zendframework/zend-mvc-plugin-identity": "^1.0",
     "zendframework/zend-mail": "^2.7.1",
     "zendframework/zend-i18n": "^2.7",
+    "zendframework/zend-mvc-i18n": "^1.0",
+    "zendframework/zend-json": "^3.0",
     "zendframework/zend-mvc-console": "^1.1",
     "doctrine/doctrine-orm-module": "^1.0",
     "gedmo/doctrine-extensions": "^2.4.24",
@@ -40,5 +42,9 @@
     "psr-4": {
       "ZfMetal\\Restful\\": "src/"
     }
+  },
+  "require-dev": {
+    "zendframework/zend-developer-tools": "^1.1",
+    "zendframework/zend-test": "^3.2"
   }
 }

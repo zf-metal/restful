@@ -20,7 +20,6 @@ class FilterSymbol extends AbstractFilter implements FilterInterface
     protected $r = false;
 
 
-
     /**
      * FilterCode constructor.
      * @param $inputFilterKey
@@ -43,6 +42,27 @@ class FilterSymbol extends AbstractFilter implements FilterInterface
         } elseif (substr($this->inputFilterValue, 0, 1) == '=') {
             $this->operator = self::EQUAL;
             $this->value = substr($this->inputFilterValue, 1);
+            $this->r = true;
+        }
+        return $this->r;
+    }
+
+    protected function notEqual()
+    {
+        if (substr($this->inputFilterValue, 0, 2) == '!=') {
+            $this->operator = self::NOT_EQUAL;
+            $this->value = substr($this->inputFilterValue, 2);
+            $this->r = true;
+        }
+        return $this->r;
+    }
+
+
+    protected function isNotNull()
+    {
+        if ($this->inputFilterValue == 'isNotNull') {
+            $this->operator = self::IS_NOT_NULL;
+            $this->value = "";
             $this->r = true;
         }
         return $this->r;
@@ -87,16 +107,78 @@ class FilterSymbol extends AbstractFilter implements FilterInterface
         return $this->r;
     }
 
+    protected function in()
+    {
+        if (substr($this->inputFilterValue, 0, 2) == '=(') {
+            $this->operator = self::IN;
+            $this->value = substr($this->inputFilterValue, 2);
+            if (substr($this->value, -1) == ')') {
+                $this->value = substr($this->value, 0, -1);
+            }
+            $this->r = true;
+        }
+        return $this->r;
+    }
+
+    protected function notIn()
+    {
+        if (substr($this->inputFilterValue, 0, 3) == '!=(') {
+            $this->operator = self::NOT_IN;
+            $this->value = substr($this->inputFilterValue, 3);
+            if (substr($this->value, -1) == ')') {
+                $this->value = substr($this->value, 0, -1);
+            }
+            $this->r = true;
+        }
+        return $this->r;
+    }
+
+
+    protected function like()
+    {
+        if (substr($this->inputFilterValue, 0, 1) == '~') {
+            $this->value = substr($this->inputFilterValue, 1);
+            if ((substr($this->value, 0, 1) == '*' && substr($this->value, -1) == '*') || (substr($this->value, 0, 1) == '%' && substr($this->value, -1) == '%')) {
+                $this->operator = self::LIKE;
+                $this->value = substr($this->value, 1);
+                $this->value = substr($this->value, -1);
+            } elseif (substr($this->value, 0, 1) == '*' || substr($this->value, 0, 1) == '%') {
+                $this->operator = self::LIKE_LEFT;
+                $this->value = substr($this->value, 1);
+            } elseif (substr($this->value, -1) == '*' || substr($this->value, -1) == '%') {
+                $this->operator = self::LIKE_RIGHT;
+                $this->value = substr($this->value, 0, -1);
+            } else {
+                $this->operator = self::LIKE;
+            }
+
+            $this->r = true;
+        }
+
+
+        return $this->r;
+    }
+
     public function prepare()
     {
         if (!$this->equal()) {
-            if (!$this->greater()) {
-                if ((!$this->less())) {
-                    if(!$this->between()){
-                    //TODO like, in, not like
-                    //Default Equal
-                    $this->operator = self::EQUAL;
-                    $this->value =  $this->inputFilterValue;
+            if (!$this->notEqual()) {
+                if (!$this->isNotNull()) {
+                    if (!$this->greater()) {
+                        if ((!$this->less())) {
+                            if (!$this->between()) {
+                                if (!$this->in()) {
+                                    if (!$this->notIn()) {
+                                        if (!$this->like()) {
+                                            //TODO like, in, not like
+                                            //Default Equal
+                                            $this->operator = self::EQUAL;
+                                            $this->value = $this->inputFilterValue;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -117,21 +199,6 @@ class FilterSymbol extends AbstractFilter implements FilterInterface
             $operator = self::EQUAL;
             $value = $this->inputFilterValue;
             $this->setRelational(true);
-        } else if (substr($this->inputFilterValue, 0, 2) == '=(') {
-            $operator = self::IN;
-            $value = substr($this->inputFilterValue, 2);
-            if (substr($value, -1) == ')') {
-                $value = substr($value, 0, -1);
-            }
-        } elseif (substr($this->inputFilterValue, 0, 3) == '!=(') {
-            $operator = self::NOT_IN;
-            $value = substr($this->inputFilterValue, 3);
-            if (substr($value, -1) == ')') {
-                $value = substr($value, 0, -1);
-            }
-        } elseif (substr($this->inputFilterValue, 0, 2) == '!=' || substr($this->inputFilterValue, 0, 2) == '<>') {
-            $operator = self::NOT_EQUAL;
-            $value = substr($this->inputFilterValue, 2);
         } elseif (substr($this->inputFilterValue, 0, 2) == '!~' || substr($this->inputFilterValue, 0, 1) == '!') {
             // NOT LIKE or NOT EQUAL
             if (substr($this->inputFilterValue, 0, 2) == '!~') {
@@ -158,31 +225,9 @@ class FilterSymbol extends AbstractFilter implements FilterInterface
                 // NOT EQUAL
                 $operator = self::NOT_EQUAL;
             }
-        } elseif (substr($this->inputFilterValue, 0, 1) == '~' || substr($this->inputFilterValue, 0, 1) == '%' || substr($this->inputFilterValue, -1) == '%' || substr($this->inputFilterValue, 0, 1) == '*' || substr($this->inputFilterValue, -1) == '*') {
-            // LIKE
-            if (substr($this->inputFilterValue, 0, 1) == '~') {
-                $value = substr($this->inputFilterValue, 1);
-            }
-            $value = trim($value);
-            if ((substr($value, 0, 1) == '*' && substr($value, -1) == '*') || (substr($value, 0, 1) == '%' && substr($value, -1) == '%')) {
-                $operator = self::LIKE;
-                $value = substr($value, 1);
-                $value = substr($value, 0, -1);
-            } elseif (substr($value, 0, 1) == '*' || substr($value, 0, 1) == '%') {
-                $operator = self::LIKE_LEFT;
-                $value = substr($value, 1);
-            } elseif (substr($value, -1) == '*' || substr($value, -1) == '%') {
-                $operator = self::LIKE_RIGHT;
-                $value = substr($value, 0, -1);
-            } else {
-                $operator = self::LIKE;
-            }
-
         }
 
     }
-
-
 
 
 }
