@@ -19,4 +19,10 @@ class FilterTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    public function testIsNotNull()
+    {
+        $filter = new FilterSymbol("foo","isNotNull");
+        $this->assertEquals(AbstractFilter::IS_NOT_NULL,$filter->getOperator());
+    }
+
 }

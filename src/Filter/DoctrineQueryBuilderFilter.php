@@ -10,6 +10,7 @@ namespace ZfMetal\Restful\Filter;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
+use ZfMetal\Restful\Filter\Type\AbstractFilter;
 use ZfMetal\Restful\Filter\Type\FilterSimple;
 
 class DoctrineQueryBuilderFilter
@@ -124,60 +125,63 @@ class DoctrineQueryBuilderFilter
         $expr = new Expr();
 
         switch ($filter->getOperator()) {
-            case FilterSimple::LIKE:
+            case AbstractFilter::LIKE:
                 $where = $expr->like($colString, $valueParameterName);
                 $this->qb->setParameter($valueParameterName, '%' . $value . '%');
                 break;
-            case FilterSimple::LIKE_LEFT:
+            case AbstractFilter::LIKE_LEFT:
                 $where = $expr->like($colString, $valueParameterName);
                 $this->qb->setParameter($valueParameterName, '%' . $value);
                 break;
-            case FilterSimple::LIKE_RIGHT:
+            case AbstractFilter::LIKE_RIGHT:
                 $where = $expr->like($colString, $valueParameterName);
                 $this->qb->setParameter($valueParameterName, $value . '%');
                 break;
-            case FilterSimple::NOT_LIKE:
+            case AbstractFilter::NOT_LIKE:
                 $where = $expr->notLike($colString, $valueParameterName);
                 $this->qb->setParameter($valueParameterName, '%' . $value . '%');
                 break;
-            case FilterSimple::NOT_LIKE_LEFT:
+            case AbstractFilter::NOT_LIKE_LEFT:
                 $where = $expr->notLike($colString, $valueParameterName);
                 $this->qb->setParameter($valueParameterName, '%' . $value);
                 break;
-            case FilterSimple::NOT_LIKE_RIGHT:
+            case AbstractFilter::NOT_LIKE_RIGHT:
                 $where = $expr->notLike($colString, $valueParameterName);
                 $this->qb->setParameter($valueParameterName, $value . '%');
                 break;
-            case FilterSimple::EQUAL:
+            case AbstractFilter::EQUAL:
                 $where = $expr->eq($colString, $valueParameterName);
                 $this->qb->setParameter($valueParameterName, $value);
                 break;
-            case FilterSimple::NOT_EQUAL:
+            case AbstractFilter::NOT_EQUAL:
                 $where = $expr->neq($colString, $valueParameterName);
                 $this->qb->setParameter($valueParameterName, $value);
                 break;
-            case FilterSimple::GREATER_EQUAL:
+            case AbstractFilter::GREATER_EQUAL:
                 $where = $expr->gte($colString, $valueParameterName);
                 $this->qb->setParameter($valueParameterName, $value);
                 break;
-            case FilterSimple::GREATER:
+            case AbstractFilter::GREATER:
                 $where = $expr->gt($colString, $valueParameterName);
                 $this->qb->setParameter($valueParameterName, $value);
                 break;
-            case FilterSimple::LESS_EQUAL:
+            case AbstractFilter::LESS_EQUAL:
                 $where = $expr->lte($colString, $valueParameterName);
                 $this->qb->setParameter($valueParameterName, $value);
                 break;
-            case FilterSimple::LESS:
+            case AbstractFilter::LESS:
                 $where = $expr->lt($colString, $valueParameterName);
                 $this->qb->setParameter($valueParameterName, $value);
                 break;
-            case FilterSimple::BETWEEN:
+            case AbstractFilter::BETWEEN:
                 $minParameterName = ':' . str_replace('.', '', $colString . '0');
                 $maxParameterName = ':' . str_replace('.', '', $colString . '1');
                 $where = $expr->between($colString, $minParameterName, $maxParameterName);
                 $this->qb->setParameter($minParameterName, $value[0]);
                 $this->qb->setParameter($maxParameterName, $value[1]);
+                break;
+            case AbstractFilter::IS_NOT_NULL:
+                $where = $expr->isNotNull($colString);
                 break;
             default:
                 throw new \InvalidArgumentException('This operator is currently not supported: ' . $filter->getOperator());

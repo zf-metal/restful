@@ -1,6 +1,6 @@
 <?php
 
-namespace ErpTest\Controller;
+namespace ZfMetalTest\Restful\Controller;
 
 use ZfMetal\Restful\Controller\MainController;
 use Zend\Stdlib\ArrayUtils;
@@ -16,7 +16,12 @@ class MainControllerTest extends AbstractHttpControllerTestCase
         // You can override configuration here with test case specific values,
         // such as sample view templates, path stacks, module_listener_options,
         // etc.
-        $configOverrides = [];
+        $configOverrides = [
+            'zf-metal-restful.options'  => array(
+            'entity_aliases' => array(
+                'foo' => \ZfMetalTest\Restful\Entity\Foo::class,
+            ),
+        ),];
 
         $this->setApplicationConfig(ArrayUtils::merge(
         // Grabbing the full application configuration:

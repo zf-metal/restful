@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: crist
- * Date: 8/6/2018
- * Time: 06:07
- */
+namespace ZfMetalTest\Restful\Entity;
 
 class Foo
 {
