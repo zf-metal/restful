@@ -183,6 +183,9 @@ class DoctrineQueryBuilderFilter
             case AbstractFilter::IS_NOT_NULL:
                 $where = $expr->isNotNull($colString);
                 break;
+            case AbstractFilter::IS_NULL:
+                $where = $expr->isNull($colString);
+                break;
             default:
                 throw new \InvalidArgumentException('This operator is currently not supported: ' . $filter->getOperator());
                 break;

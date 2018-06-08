@@ -13,6 +13,7 @@ abstract class AbstractFilter
 {
 
     const IS_NOT_NULL = 'is not null';
+    const IS_NULL = 'is null';
 
     const EQUAL = '= %s';
     const NOT_EQUAL = '!= %s';

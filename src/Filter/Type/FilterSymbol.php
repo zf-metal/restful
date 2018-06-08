@@ -22,6 +22,7 @@ class FilterSymbol extends AbstractFilter implements FilterInterface
 
     /**
      * FilterCode constructor.
+     *
      * @param $inputFilterKey
      * @param $inputFilterValue
      */
@@ -67,6 +68,17 @@ class FilterSymbol extends AbstractFilter implements FilterInterface
         }
         return $this->r;
     }
+
+    protected function isNull()
+    {
+        if ($this->inputFilterValue == 'isNull') {
+            $this->operator = self::IS_NULL;
+            $this->value = "";
+            $this->r = true;
+        }
+        return $this->r;
+    }
+
 
     protected function greater()
     {
@@ -164,16 +176,18 @@ class FilterSymbol extends AbstractFilter implements FilterInterface
         if (!$this->equal()) {
             if (!$this->notEqual()) {
                 if (!$this->isNotNull()) {
-                    if (!$this->greater()) {
-                        if ((!$this->less())) {
-                            if (!$this->between()) {
-                                if (!$this->in()) {
-                                    if (!$this->notIn()) {
-                                        if (!$this->like()) {
-                                            //TODO like, in, not like
-                                            //Default Equal
-                                            $this->operator = self::EQUAL;
-                                            $this->value = $this->inputFilterValue;
+                    if (!$this->isNull()) {
+                        if (!$this->greater()) {
+                            if ((!$this->less())) {
+                                if (!$this->between()) {
+                                    if (!$this->in()) {
+                                        if (!$this->notIn()) {
+                                            if (!$this->like()) {
+                                                //TODO like, in, not like
+                                                //Default Equal
+                                                $this->operator = self::EQUAL;
+                                                $this->value = $this->inputFilterValue;
+                                            }
                                         }
                                     }
                                 }

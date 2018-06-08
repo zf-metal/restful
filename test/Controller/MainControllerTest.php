@@ -2,6 +2,7 @@
 
 namespace ZfMetalTest\Restful\Controller;
 
+use Zend\ServiceManager\ServiceManager;
 use ZfMetal\Restful\Controller\MainController;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
@@ -35,8 +36,30 @@ class MainControllerTest extends AbstractHttpControllerTestCase
 
     }
 
+
+    protected function configureServiceManager(ServiceManager $services)
+    {
+        $services->setAllowOverride(true);
+
+
+        $mockedEm = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRepository'])
+            ->getMock();
+
+
+        $services->setService("doctrine.entitymanager.orm_default",$mockedEm);
+
+        $services->setAllowOverride(false);
+    }
+
+
     public function testIndexActionCanBeAccessed()
     {
+        $this->markTestSkipped(
+            'Not finish'
+        );
+
         $this->dispatch('/zfmr/api/foo');
         $this->assertResponseStatusCode(200);
         $this->assertModuleName('ZfMetal\Restful');
