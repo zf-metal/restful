@@ -139,6 +139,14 @@ class MainController extends AbstractRestfulController
 
         $qb = $this->getEntityRepository()->createQueryBuilder('u')->select('u');
 
+        if($query["limit"]){
+
+            $qb->setMaxResults($query["limit"]);
+            unset($query["limit"]);
+        }
+
+
+
         $filterType = Builder::TYPE_SYMBOL;
 
         if (key_exists("filterType", $query)) {
@@ -150,6 +158,7 @@ class MainController extends AbstractRestfulController
 
         $DoctrineQueryBuilderFilter = new DoctrineQueryBuilderFilter($qb, $builder->getFilters());
         $qb = $DoctrineQueryBuilderFilter->applyFilters();
+
 
 
         return $qb->getQuery()->getResult();
