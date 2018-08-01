@@ -139,11 +139,30 @@ class MainController extends AbstractRestfulController
 
         $qb = $this->getEntityRepository()->createQueryBuilder('u')->select('u');
 
-        if($query["limit"]){
 
+        if($query["page"] && is_numeric($query["page"])){
+            $num = ($query["limit"] && is_numeric($query["limit"]))?$query["limit"]:10;
+            $qb->setFirstResult($query["page"] * $num);
+            unset($query["page"]);
+        }
+
+        if($query["limit"] && is_numeric($query["limit"])){
             $qb->setMaxResults($query["limit"]);
             unset($query["limit"]);
         }
+
+        if($query["orderby"]){
+            if($query["orderby"] == "DESC" || $query["orderby"] == "ASC"){
+                $order = $query["orderby"];
+            }else{
+                $order = "ASC";
+            }
+
+            $qb->orderBy('u.'.$query["orderby"],$order);
+            unset($query["orderby"]);
+               unset($query["order"]);
+        }
+
 
 
 
