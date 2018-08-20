@@ -237,7 +237,8 @@ class Transform
 
         foreach ($annotations as $an) {
             if (($an instanceof ManyToOne && !$an->inversedBy)
-                || ($an instanceof ManyToMany && !$an->inversedBy)
+              //  || ($an instanceof ManyToMany && !$an->inversedBy)
+                || ($an instanceof ManyToMany)
                 || ($an instanceof OneToOne && !$an->inversedBy)
                 || $an instanceof OneToMany) {
                 return $an;
