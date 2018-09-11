@@ -92,7 +92,7 @@ class Transform
     public function toArray($entity, $depth = 1)
     {
         $refClass = new \ReflectionClass($entity);
-
+        $result = [];
         /** @var \ReflectionProperty $property */
         foreach ($this->getProperties($refClass) as $property) {
 

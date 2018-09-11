@@ -160,7 +160,6 @@ class MainController extends AbstractRestfulController
 
             $qb->orderBy('u.'.$query["orderby"],$order);
             unset($query["orderby"]);
-               unset($query["order"]);
         }
 
 
