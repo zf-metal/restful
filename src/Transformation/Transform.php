@@ -201,7 +201,7 @@ class Transform
 
             if ($isCollection) {
                 $collection = $value;
-                if ($collection->count()) {
+                if ($collection && $collection->count()) {
 
                     if ($policy instanceof Policy\Interfaces\Paginate) { // pagination policy
                         $collection = $this->paginate($policy, $collection);
