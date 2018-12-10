@@ -12,7 +12,10 @@ use ZfMetal\Restful\Exception\ItemNotExistException;
 use ZfMetal\Restful\Exception\ValidationException;
 use ZfMetal\Restful\Filter\Builder;
 use ZfMetal\Restful\Filter\DoctrineQueryBuilderFilter;
+use ZfMetal\Restful\Filter\FilterManager;
 use ZfMetal\Restful\Options\ModuleOptions;
+use ZfMetal\Restful\Transformation\Policy\Annotation;
+use ZfMetal\Restful\Transformation\Policy\Interfaces\Auto;
 use ZfMetal\Restful\Transformation\Transform;
 
 /**
@@ -47,6 +50,18 @@ class MainController extends AbstractRestfulController
     protected $entityAlias;
 
 
+    /**
+     * @var FilterManager
+     */
+    protected $filterManager;
+
+    /**
+     * Override with your local policies of you entity
+     * @var array
+     */
+    protected $policies = [];
+
+
     public function getEm()
     {
         return $this->em;
@@ -56,6 +71,42 @@ class MainController extends AbstractRestfulController
     {
         $this->em = $em;
     }
+
+    /**
+     * @return FilterManager
+     */
+    public function getFilterManager(){
+        if(!$this->filterManager){
+            $this->filterManager = new FilterManager($this->getEm());
+        }
+        return $this->filterManager;
+    }
+
+    /**
+     * @param FilterManager $filterManager
+     */
+    public function setFilterManager($filterManager)
+    {
+        $this->filterManager = $filterManager;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPolicies()
+    {
+        return $this->policies;
+    }
+
+    /**
+     * @param array $policies
+     */
+    public function setPolicies($policies)
+    {
+        $this->policies = $policies;
+    }
+
+
 
     /**
      * @return string
@@ -133,53 +184,23 @@ class MainController extends AbstractRestfulController
         return $this->getEm()->getRepository($this->getEntityClass());
     }
 
+    /**
+     *
+     * @return null|Annotation
+     */
+    protected function getEntityLocalPolicies(){
+        if($this->policies){
+            $localPolicy = (new \ZfMetal\Restful\Transformation\Policy\Auto())->inside(
+                $this->policies
+            );
+            return $localPolicy;
+        }
+        return null;
+    }
 
     protected function filterQuery($query)
     {
-
-        $qb = $this->getEntityRepository()->createQueryBuilder('u')->select('u');
-
-
-        if($query["page"] && is_numeric($query["page"])){
-            $num = ($query["limit"] && is_numeric($query["limit"]))?$query["limit"]:10;
-            $qb->setFirstResult($query["page"] * $num);
-            unset($query["page"]);
-        }
-
-        if($query["limit"] && is_numeric($query["limit"])){
-            $qb->setMaxResults($query["limit"]);
-            unset($query["limit"]);
-        }
-
-        if($query["orderby"]){
-            if($query["orderby"] == "DESC" || $query["orderby"] == "ASC"){
-                $order = $query["orderby"];
-            }else{
-                $order = "ASC";
-            }
-
-            $qb->orderBy('u.'.$query["orderby"],$order);
-            unset($query["orderby"]);
-        }
-
-
-
-
-        $filterType = Builder::TYPE_SYMBOL;
-
-        if (key_exists("filterType", $query)) {
-            $filterType = $query["filterType"];
-        }
-
-        $builder = new Builder($query, $filterType);
-        $builder->build();
-
-        $DoctrineQueryBuilderFilter = new DoctrineQueryBuilderFilter($qb, $builder->getFilters());
-        $qb = $DoctrineQueryBuilderFilter->applyFilters();
-
-
-
-        return $qb->getQuery()->getResult();
+        return $this->getFilterManager()->filterEntityByRequestQuery($this->getEntityClass(),$query);
     }
 
     /**
@@ -194,7 +215,7 @@ class MainController extends AbstractRestfulController
 
             $objects = $this->filterQuery($query);
 
-            $transform = new Transform();
+            $transform = new Transform($this->getEntityLocalPolicies());
             $results = $transform->toArrays($objects);
 
             return new JsonModel($results);
@@ -224,7 +245,7 @@ class MainController extends AbstractRestfulController
                     throw new ItemNotExistException();
                 }
 
-                $transform = new Transform();
+                $transform = new Transform($this->getEntityLocalPolicies());
                 $results = $transform->toArray($object);
 
             }
