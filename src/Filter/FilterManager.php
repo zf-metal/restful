@@ -34,7 +34,7 @@ class FilterManager
      * @param array $query
      * @return array
      */
-    public function filterEntityByRequestQuery($entityClassName, array $query = [])
+    public function filterEntityByRequestQuery($entityClassName,\Zend\Stdlib\ParametersInterface $query)
     {
 
         $qb = $this->getEntityRepository($entityClassName)->createQueryBuilder('u')->select('u');
