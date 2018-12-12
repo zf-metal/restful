@@ -75,8 +75,9 @@ class MainController extends AbstractRestfulController
     /**
      * @return FilterManager
      */
-    public function getFilterManager(){
-        if(!$this->filterManager){
+    public function getFilterManager()
+    {
+        if (!$this->filterManager) {
             $this->filterManager = new FilterManager($this->getEm());
         }
         return $this->filterManager;
@@ -105,7 +106,6 @@ class MainController extends AbstractRestfulController
     {
         $this->policies = $policies;
     }
-
 
 
     /**
@@ -188,8 +188,9 @@ class MainController extends AbstractRestfulController
      *
      * @return null|Annotation
      */
-    protected function getEntityLocalPolicies(){
-        if($this->policies){
+    protected function getEntityLocalPolicies()
+    {
+        if ($this->policies) {
             $localPolicy = (new \ZfMetal\Restful\Transformation\Policy\Auto())->inside(
                 $this->policies
             );
@@ -200,7 +201,7 @@ class MainController extends AbstractRestfulController
 
     protected function filterQuery($query)
     {
-        return $this->getFilterManager()->filterEntityByRequestQuery($this->getEntityClass(),$query);
+        return $this->getFilterManager()->filterEntityByRequestQuery($this->getEntityClass(), $query);
     }
 
     /**
@@ -269,11 +270,15 @@ class MainController extends AbstractRestfulController
             $object = new $entityClass;
             $form->bind($object);
 
+            $this->getEventManager()->trigger('create_' . $this->getEntityAlias() . '_before', $this, ["object" => $object]);
+
             $result = FormProcess::process($this->getEm(), $form, false, $data)->getArrayResult();
 
             if (!$result["status"]) {
                 throw new ValidationException();
             } else {
+                $this->getEventManager()->trigger('create_' . $this->getEntityAlias() . '_after', $this, ["object" => $object]);
+
                 $result["message"] = "The item was created successfully";
             }
 
@@ -306,12 +311,15 @@ class MainController extends AbstractRestfulController
 
 
             $form->bind($object);
+            $this->getEventManager()->trigger('update_' . $this->getEntityAlias() . '_before', $this, ["object" => $object]);
 
             $result = FormProcess::process($this->getEm(), $form, false, $data)->getArrayResult();
 
             if (!$result["status"]) {
                 throw new ValidationException();
             } else {
+                $this->getEventManager()->trigger('update_' . $this->getEntityAlias() . '_after', $this, ["object" => $object]);
+
                 $result["message"] = "The item was updated successfully";
             }
 
