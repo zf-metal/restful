@@ -8,6 +8,8 @@ use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 use ZfMetal\Commons\Facade\Service\FormBuilder;
 use ZfMetal\Commons\Facade\Service\FormProcess;
+use ZfMetal\Log\Facade\Logger;
+use ZfMetal\Restful\Exception\DataBaseException;
 use ZfMetal\Restful\Exception\ItemNotExistException;
 use ZfMetal\Restful\Exception\ValidationException;
 use ZfMetal\Restful\Filter\Builder;
@@ -61,6 +63,10 @@ class MainController extends AbstractRestfulController
      */
     protected $policies = [];
 
+
+    protected $status = false;
+
+    protected $errors = [];
 
     public function getEm()
     {
@@ -240,16 +246,13 @@ class MainController extends AbstractRestfulController
     public function get($id = null)
     {
         try {
-
             if ($id) {
                 $object = $this->getEntityRepository()->find($id);
                 if (!$object) {
                     throw new ItemNotExistException();
                 }
-
                 $transform = new Transform($this->getEntityLocalPolicies());
                 $results = $transform->toArray($object);
-
             }
 
             return new JsonModel($results);
@@ -261,41 +264,54 @@ class MainController extends AbstractRestfulController
     }
 
 
-
-
     public function create($data)
     {
 
         try {
-
             $form = FormBuilder::generate($this->getEm(), $this->getEntityClass());
-
             $entityClass = $this->getEntityClass();
             $object = new $entityClass;
             $form->bind($object);
+            $form->setData($data);
 
-            $this->getEventManager()->trigger('create_' . $this->getEntityAlias() . '_before', $this, ["object" => $object]);
+            if ($form->isValid()) {
+                $this->getEventManager()->trigger('create_' . $this->getEntityAlias() . '_before', $this, ["object" => $object]);
+                try {
+                    $this->getEm()->persist($object);
+                    $this->getEm()->flush();
+               } catch (\Exception $e) {
+                    Logger::exception($e);
+                    throw new DataBaseException();
+                }
+                $this->getEventManager()->trigger('create_' . $this->getEntityAlias() . '_after', $this, ["object" => $object]);
+                $this->status = true;
+            } else {
+                foreach ($form->getMessages() as $key => $messages) {
+                    foreach ($messages as $msj) {
+                        $this->errors[$key][] = $msj;
+                    }
+                }
+                $this->status = false;
+            }
 
-
-            $result = FormProcess::process($this->getEm(), $form, false, $data)->getArrayResult();
-
-            if (!$result["status"]) {
+            if (!$this->status) {
                 throw new ValidationException();
             } else {
-                $this->getEventManager()->trigger('create_' . $this->getEntityAlias() . '_after', $this, ["object" => $object]);
-
-                $result["message"] = "The item was created successfully";
+                $message = "The item was created successfully";
             }
 
             $this->getResponse()->setStatusCode(Response::STATUS_CODE_201);
 
-            return new JsonModel($result);
+            return new JsonModel(["status" => $this->status, "message" => $message, "id" => $object->getId()]);
 
         } catch (ValidationException $e) {
-            return $this->responseValidationException($e, $result["errors"]);
+            return $this->responseValidationException($e, $this->errors);
+        } catch (DataBaseException $e) {
+            return $this->responseDataBaseException($e);
         } catch (\Exception $e) {
             $this->getResponse()->setStatusCode(Response::STATUS_CODE_500);
             $a = [
+                "status" => false,
                 "message" => $e->getMessage()
             ];
             return new JsonModel($a);
@@ -316,21 +332,38 @@ class MainController extends AbstractRestfulController
 
 
             $form->bind($object);
-            $this->getEventManager()->trigger('update_' . $this->getEntityAlias() . '_before', $this, ["object" => $object]);
+            $form->setData($data);
 
-            $result = FormProcess::process($this->getEm(), $form, false, $data)->getArrayResult();
+            if ($form->isValid()) {
+                $this->getEventManager()->trigger('update_' . $this->getEntityAlias() . '_before', $this, ["object" => $object]);
+                try {
+                    $this->getEm()->persist($object);
+                    $this->getEm()->flush();
+                } catch (\Exception $e) {
+                    Logger::exception($e);
+                    throw new DataBaseException();
+                }
+                $this->getEventManager()->trigger('update_' . $this->getEntityAlias() . '_after', $this, ["object" => $object]);
+                $this->status = true;
+            } else {
+                foreach ($form->getMessages() as $key => $messages) {
+                    foreach ($messages as $msj) {
+                        $this->errors[$key][] = $msj;
+                    }
+                }
+                $this->status = false;
+            }
 
-            if (!$result["status"]) {
+            if (!$this->status) {
                 throw new ValidationException();
             } else {
-                $this->getEventManager()->trigger('update_' . $this->getEntityAlias() . '_after', $this, ["object" => $object]);
-
-                $result["message"] = "The item was updated successfully";
+                $message = "The item was updated successfully";
             }
+
 
             $this->getResponse()->setStatusCode(Response::STATUS_CODE_200);
 
-            return new JsonModel($result);
+            return new JsonModel(["status" => $this->status, "message" => $message, "id" => $object->getId()]);
 
         } catch (ItemNotExistException $e) {
             return $this->responseSpecificException($e);
@@ -375,6 +408,22 @@ class MainController extends AbstractRestfulController
     {
         $this->getResponse()->setStatusCode(Response::STATUS_CODE_500);
         $a = [
+            "status" => false,
+            "message" => $e->getMessage()
+        ];
+        return new JsonModel($a);
+    }
+
+
+    /**
+     * @param \Exception $e
+     * @return JsonModel
+     */
+    public function responseDataBaseException(\Exception $e)
+    {
+        $this->getResponse()->setStatusCode(Response::STATUS_CODE_500);
+        $a = [
+            "status" => false,
             "message" => $e->getMessage()
         ];
         return new JsonModel($a);
@@ -389,6 +438,7 @@ class MainController extends AbstractRestfulController
     {
         $this->getResponse()->setStatusCode($e->getCode());
         $a = [
+            "status" => false,
             "message" => $e->getMessage()
         ];
 
@@ -409,6 +459,7 @@ class MainController extends AbstractRestfulController
     {
         $this->getResponse()->setStatusCode($e->getCode());
         $a = [
+            "status" => false,
             "message" => $e->getMessage(),
             "errors" => $errors
         ];

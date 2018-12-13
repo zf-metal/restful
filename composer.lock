@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "29698de8083c39faaef30dab66d60d2b",
+    "content-hash": "9a519b72cc5694c604ca25c6491125b3",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -1262,12 +1262,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
-                "reference": "a2233f555ddf55e5600f386fba7781cea1cb82d3"
+                "reference": "6eb115e3a56aaad656125270b0a8a33623865759"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/debug/zipball/a2233f555ddf55e5600f386fba7781cea1cb82d3",
-                "reference": "a2233f555ddf55e5600f386fba7781cea1cb82d3",
+                "url": "https://api.github.com/repos/symfony/debug/zipball/6eb115e3a56aaad656125270b0a8a33623865759",
+                "reference": "6eb115e3a56aaad656125270b0a8a33623865759",
                 "shasum": ""
             },
             "require": {
@@ -1310,7 +1310,7 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2018-11-27T12:43:10+00:00"
+            "time": "2018-12-12T20:57:22+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -2352,6 +2352,76 @@
                 "zf"
             ],
             "time": "2018-04-30T15:21:52+00:00"
+        },
+        {
+            "name": "zendframework/zend-log",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/zend-log.git",
+                "reference": "6322ae48560ebe5840a63a10d94444552bfdfaf4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/zend-log/zipball/6322ae48560ebe5840a63a10d94444552bfdfaf4",
+                "reference": "6322ae48560ebe5840a63a10d94444552bfdfaf4",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6 || ^7.0",
+                "psr/log": "^1.0",
+                "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3",
+                "zendframework/zend-stdlib": "^2.7 || ^3.0"
+            },
+            "provide": {
+                "psr/log-implementation": "1.0.0"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "^1.6",
+                "phpunit/phpunit": "^5.7.15 || ^6.0.8",
+                "zendframework/zend-coding-standard": "~1.0.0",
+                "zendframework/zend-db": "^2.6",
+                "zendframework/zend-escaper": "^2.5",
+                "zendframework/zend-filter": "^2.5",
+                "zendframework/zend-mail": "^2.6.1",
+                "zendframework/zend-validator": "^2.10.1"
+            },
+            "suggest": {
+                "ext-mongo": "mongo extension to use Mongo writer",
+                "ext-mongodb": "mongodb extension to use MongoDB writer",
+                "zendframework/zend-db": "Zend\\Db component to use the database log writer",
+                "zendframework/zend-escaper": "Zend\\Escaper component, for use in the XML log formatter",
+                "zendframework/zend-mail": "Zend\\Mail component to use the email log writer",
+                "zendframework/zend-validator": "Zend\\Validator component to block invalid log messages"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.10.x-dev",
+                    "dev-develop": "2.11.x-dev"
+                },
+                "zf": {
+                    "component": "Zend\\Log",
+                    "config-provider": "Zend\\Log\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zend\\Log\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Robust, composite logger with filtering, formatting, and PSR-3 support",
+            "keywords": [
+                "ZendFramework",
+                "log",
+                "logging",
+                "zf"
+            ],
+            "time": "2018-09-27T21:06:59+00:00"
         },
         {
             "name": "zendframework/zend-mail",
@@ -3501,6 +3571,56 @@
                 "zf3"
             ],
             "time": "2018-11-30T14:24:17+00:00"
+        },
+        {
+            "name": "zf-metal/log",
+            "version": "1.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zf-metal/log.git",
+                "reference": "8801a0a1ba0930f6049217730922bd4e710e233b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zf-metal/log/zipball/8801a0a1ba0930f6049217730922bd4e710e233b",
+                "reference": "8801a0a1ba0930f6049217730922bd4e710e233b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6",
+                "zendframework/zend-log": "^2.9.2",
+                "zf-metal/commons": "^1.3.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ZfMetal\\Log\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Cristian Incarnato",
+                    "email": "cincarnato@gmail.com",
+                    "homepage": "http://cincarnato.com.ar/",
+                    "role": "Desarrollador"
+                },
+                {
+                    "name": "Alejandro Furgeri",
+                    "email": "alecitoman@gmail.com",
+                    "homepage": "http://afurgeri.com.ar/",
+                    "role": "Desarrollador"
+                }
+            ],
+            "description": "Modulo de logs para Zend Framework 3",
+            "homepage": "https://github.com/cincarnato",
+            "keywords": [
+                "zf3"
+            ],
+            "time": "2018-12-13T12:41:02+00:00"
         }
     ],
     "packages-dev": [

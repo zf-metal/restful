@@ -2,18 +2,11 @@
 
 namespace ZfMetal\Restful\Controller;
 
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
-use Indaxia\OTR\Traits\Transformable;
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractRestfulController as ARC;
 use Zend\View\Model\JsonModel;
-use ZfMetal\Commons\Facade\Service\FormBuilder;
-use ZfMetal\Commons\Facade\Service\FormProcess;
-use ZfMetal\Restful\Exception\ItemNotExistException;
 use ZfMetal\Restful\Exception\MethodNotAllowed;
-use ZfMetal\Restful\Filter\Builder;
-use ZfMetal\Restful\Filter\DoctrineQueryBuilderFilter;
-use ZfMetal\Restful\Options\ModuleOptions;
+
 
 /**
  * MainController

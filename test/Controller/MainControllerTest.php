@@ -42,12 +42,11 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
         /** @var EventManager $eventManager */
         $eventManager = $this->getApplicationServiceLocator()->get("EventManager");
         $eventManager->getSharedManager();
-        $eventManager->getSharedManager()->attach(MainController::class,'create_foo_before', function ($e) {
-            echo "addEventOnCreate".PHP_EOL;
+        $eventManager->getSharedManager()->attach(MainController::class, 'create_foo_before', function ($e) {
+            echo "addEventOnCreate" . PHP_EOL;
         });
 
     }
-
 
 
     /**
@@ -88,10 +87,10 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
     public function testCreate()
     {
         $this->setUseConsoleRequest(false);
-       $this->addEventOnCreate();
+        //$this->addEventOnCreate();
 
         $params = [
-            "title" => "test title",
+            "title" => "test title create",
         ];
 
         $this->dispatch("/zfmr/api/foo", "POST",
@@ -103,10 +102,38 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
             "message" => "The item was created successfully"
         ];
 
-        echo "VARDUMP:";
-        var_dump($this->getResponse()->getContent());
 
         $this->assertJsonStringEqualsJsonString($this->getResponse()->getContent(), json_encode($jsonToCompare));
         $this->assertResponseStatusCode(201);
+    }
+
+    /**
+     * @depends testCreate
+     * METHOD PUT
+     * ACTION update
+     * DESC update de usuario
+     */
+
+    public function testUpdate()
+    {
+        $this->setUseConsoleRequest(false);
+        $this->addEventOnCreate();
+
+        $params = [
+            "title" => "test title updated",
+        ];
+
+        $this->dispatch("/zfmr/api/foo/1", "PUT",
+            $params);
+
+        $jsonToCompare = [
+            "status" => true,
+            'id' => 1,
+            "message" => "The item was updated successfully"
+        ];
+
+
+        $this->assertJsonStringEqualsJsonString($this->getResponse()->getContent(), json_encode($jsonToCompare));
+        $this->assertResponseStatusCode(200);
     }
 }

@@ -1,0 +1,29 @@
+2018-12-13T12:38:56+00:00 ERR (3): Exception: Undefined variable: objectasd
+ FILE: C:\Users\crist\Proyectos\ZfMetal\restful\src\Controller\MainController.php
+ LINE: 280
+ TRACE: #0 C:\Users\crist\Proyectos\ZfMetal\restful\src\Controller\MainController.php(280): PHPUnit_Util_ErrorHandler::handleError(8, 'Undefined varia...', 'C:\\Users\\crist\\...', 280, Array)
+#1 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\zendframework\zend-mvc\src\Controller\AbstractRestfulController.php(469): ZfMetal\Restful\Controller\MainController->create(Array)
+#2 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\zendframework\zend-mvc\src\Controller\AbstractRestfulController.php(427): Zend\Mvc\Controller\AbstractRestfulController->processPostData(Object(Zend\Http\PhpEnvironment\Request))
+#3 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\zendframework\zend-eventmanager\src\EventManager.php(322): Zend\Mvc\Controller\AbstractRestfulController->onDispatch(Object(Zend\Mvc\MvcEvent))
+#4 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\zendframework\zend-eventmanager\src\EventManager.php(179): Zend\EventManager\EventManager->triggerListeners(Object(Zend\Mvc\MvcEvent), Object(Closure))
+#5 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\zendframework\zend-mvc\src\Controller\AbstractController.php(104): Zend\EventManager\EventManager->triggerEventUntil(Object(Closure), Object(Zend\Mvc\MvcEvent))
+#6 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\zendframework\zend-mvc\src\Controller\AbstractRestfulController.php(311): Zend\Mvc\Controller\AbstractController->dispatch(Object(Zend\Http\PhpEnvironment\Request), Object(Zend\Http\PhpEnvironment\Response))
+#7 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\zendframework\zend-mvc\src\DispatchListener.php(138): Zend\Mvc\Controller\AbstractRestfulController->dispatch(Object(Zend\Http\PhpEnvironment\Request), Object(Zend\Http\PhpEnvironment\Response))
+#8 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\zendframework\zend-eventmanager\src\EventManager.php(322): Zend\Mvc\DispatchListener->onDispatch(Object(Zend\Mvc\MvcEvent))
+#9 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\zendframework\zend-eventmanager\src\EventManager.php(179): Zend\EventManager\EventManager->triggerListeners(Object(Zend\Mvc\MvcEvent), Object(Closure))
+#10 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\zendframework\zend-mvc\src\Application.php(330): Zend\EventManager\EventManager->triggerEventUntil(Object(Closure), Object(Zend\Mvc\MvcEvent))
+#11 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\zendframework\zend-test\src\PHPUnit\Controller\AbstractControllerTestCase.php(344): Zend\Mvc\Application->run()
+#12 C:\Users\crist\Proyectos\ZfMetal\restful\test\Controller\MainControllerTest.php(98): Zend\Test\PHPUnit\Controller\AbstractControllerTestCase->dispatch('/zfmr/api/foo', 'POST', Array)
+#13 [internal function]: ZfMetalTest\Restful\Controller\MainControllerTest->testCreate(NULL)
+#14 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\phpunit\phpunit\src\Framework\TestCase.php(1062): ReflectionMethod->invokeArgs(Object(ZfMetalTest\Restful\Controller\MainControllerTest), Array)
+#15 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\phpunit\phpunit\src\Framework\TestCase.php(913): PHPUnit_Framework_TestCase->runTest()
+#16 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\phpunit\phpunit\src\Framework\TestResult.php(686): PHPUnit_Framework_TestCase->runBare()
+#17 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\phpunit\phpunit\src\Framework\TestCase.php(868): PHPUnit_Framework_TestResult->run(Object(ZfMetalTest\Restful\Controller\MainControllerTest))
+#18 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\phpunit\phpunit\src\Framework\TestSuite.php(733): PHPUnit_Framework_TestCase->run(Object(PHPUnit_Framework_TestResult))
+#19 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\phpunit\phpunit\src\TextUI\TestRunner.php(517): PHPUnit_Framework_TestSuite->run(Object(PHPUnit_Framework_TestResult))
+#20 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\phpunit\phpunit\src\TextUI\Command.php(186): PHPUnit_TextUI_TestRunner->doRun(Object(PHPUnit_Framework_TestSuite), Array, true)
+#21 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\phpunit\phpunit\src\TextUI\Command.php(116): PHPUnit_TextUI_Command->run(Array, true)
+#22 C:\Users\crist\Proyectos\ZfMetal\restful\vendor\phpunit\phpunit\phpunit(52): PHPUnit_TextUI_Command::main()
+#23 {main}
+ ~ END EXCEPTION ~ 
+

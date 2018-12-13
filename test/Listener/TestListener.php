@@ -13,6 +13,7 @@ use Zend\EventManager\EventInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use ZfMetal\Restful\Controller\MainController;
+use ZfMetalTest\Restful\Entity\Foo;
 
 class TestListener implements ListenerAggregateInterface
 {
@@ -34,6 +35,9 @@ class TestListener implements ListenerAggregateInterface
         $sharedEventManager = $events->getSharedManager();
         $this->listeners[] = $sharedEventManager->attach(MainController::class,'create_foo_before', [$this, 'log']);
         $this->listeners[] = $sharedEventManager->attach(MainController::class,'create_foo_after', [$this, 'log']);
+        $this->listeners[] = $sharedEventManager->attach(MainController::class,'update_foo_before', [$this, 'log']);
+        $this->listeners[] = $sharedEventManager->attach(MainController::class,'update_foo_after', [$this, 'log']);
+
     }
 
     /**
@@ -48,7 +52,9 @@ class TestListener implements ListenerAggregateInterface
     }
 
     function log(EventInterface $event){
-        echo "TestListener. EventName: ".$event->getName().PHP_EOL;
+        /** @var Foo $object */
+        $object = $event->getParam("object");
+        echo "TestListener. EventName: ".$event->getName()." Title: ".$object->getTitle().PHP_EOL;
 
     }
 }

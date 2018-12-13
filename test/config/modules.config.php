@@ -30,5 +30,6 @@ return [
     'DoctrineORMModule',
     'ZfMetal\Commons',
     'ZfMetalTest\Restful',
+    'ZfMetal\Log',
     'ZfMetal\Restful',
 ];

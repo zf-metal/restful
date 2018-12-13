@@ -57,7 +57,7 @@ class FooLoader extends AbstractFixture implements FixtureInterface
 
         $this->em = $manager;
 
-        $this->createFoo(1, "Test Title");
+        $this->createFoo(1, "Test Title DataFixture");
            $manager->flush();
 
 

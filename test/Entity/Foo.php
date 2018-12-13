@@ -30,6 +30,7 @@ class Foo
      * @Annotation\Type("Zend\Form\Element\Text")
      * @Annotation\Attributes({"type":"text"})
      * @Annotation\Options({"label":"Titulo", "description":"", "addon":""})
+     * @Annotation\Validator({"name":"StringLength", "options": {"min":3}})
      * @ORM\Column(type="string", length=100, unique=false, nullable=true,
      * name="title")
      */

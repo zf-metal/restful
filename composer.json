@@ -3,7 +3,7 @@
   "description": "Doctrine restful for Zend Framework 3",
   "type": "library",
   "license": "MIT",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "homepage": "https://github.com/cincarnato",
   "keywords": [
     "zf3"
@@ -37,7 +37,8 @@
     "zendframework/zend-code": "^3.1",
     "doctrine/doctrine-orm-module": "^1.0",
     "gedmo/doctrine-extensions": "^2.4.24",
-    "zf-metal/commons": "^1.0.0"
+    "zf-metal/commons": "^1.3.7",
+    "zf-metal/log":"^1.1.5"
   },
   "autoload": {
     "psr-4": {
