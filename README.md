@@ -1,6 +1,5 @@
 # ZfMetal\Restful
 
-
 ## Dependencies
 
 - "doctrine/doctrine-orm-module"
@@ -33,9 +32,38 @@
 - Method: DELETE
 - URL: /zfmr/api/entityalias/:id
 
+## Custom Routes
+You can create your own restful routes and invoke \ZfMetal\Restful\Controller\MainController
 
-**Obs:** You can create your own restful routes and invoke \ZfMetal\Restful\Controller\MainController
+```
+<?php
 
+return [
+    'router' => [
+        'routes' => [
+            'zfmcErp' => [
+                'type' => \Zend\Router\Http\Literal::class,
+                'mayTerminate' => false,
+                'options' => [
+                    'route' => '/custom/api',
+                ],
+                'child_routes' => [
+                    'api' => [
+                        'type' => \Zend\Router\Http\Segment::class,
+                        'mayTerminate' => false,
+                        'options' => [
+                            'route' => '/:entityAlias[/:id]',
+                            'defaults' => [
+                                'controller' => \ZfMetal\Restful\Controller\MainController::class,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]
+];
+```
 ## Configure Entities
 
 Add zf-metal-restful.global.php in config/autoload

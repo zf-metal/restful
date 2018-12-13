@@ -136,4 +136,34 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
         $this->assertJsonStringEqualsJsonString($this->getResponse()->getContent(), json_encode($jsonToCompare));
         $this->assertResponseStatusCode(200);
     }
+
+    /**
+     * @depends testCreateData
+     * METHOD POST
+     * ACTION create with custom route
+     * DESC crear un nuevo usuario
+     */
+
+    public function testCreateWithCustomRoute()
+    {
+        $this->setUseConsoleRequest(false);
+        //$this->addEventOnCreate();
+
+        $params = [
+            "title" => "custom route create foo",
+        ];
+
+        $this->dispatch("/custom/api/foo", "POST",
+            $params);
+
+        $jsonToCompare = [
+            "status" => true,
+            'id' => 2,
+            "message" => "The item was created successfully"
+        ];
+
+
+        $this->assertJsonStringEqualsJsonString($this->getResponse()->getContent(), json_encode($jsonToCompare));
+        $this->assertResponseStatusCode(201);
+    }
 }
