@@ -16,6 +16,9 @@ class ModuleOptions extends \Zend\Stdlib\AbstractOptions
 
     private $entityAliases = '';
 
+
+    private $returnItemOnUpdate = false;
+
     public function getEntityAliases()
     {
         return $this->entityAliases;
@@ -25,6 +28,25 @@ class ModuleOptions extends \Zend\Stdlib\AbstractOptions
     {
         $this->entityAliases= $entityAliases;
     }
+
+    /**
+     * @return bool
+     */
+    public function getReturnItemOnUpdate()
+    {
+        return $this->returnItemOnUpdate;
+    }
+
+    /**
+     * @param bool $returnItemOnUpdate
+     */
+    public function setReturnItemOnUpdate($returnItemOnUpdate)
+    {
+        $this->returnItemOnUpdate = $returnItemOnUpdate;
+    }
+
+
+
 
 
 }

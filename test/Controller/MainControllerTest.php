@@ -22,6 +22,9 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
     public function setUp()
     {
 
+        ini_set('xdebug.var_display_max_depth','10');
+        ini_set('xdebug.var_display_max_children','256');
+        ini_set('xdebug.var_display_max_data','1024');
         $this->setApplicationConfig(
             include __DIR__ . '/../config/application.config.php'
         );
@@ -158,7 +161,7 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
 
         $jsonToCompare = [
             "status" => true,
-            'id' => 2,
+            'id' => 3,
             "message" => "The item was created successfully"
         ];
 

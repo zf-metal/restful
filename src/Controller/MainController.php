@@ -24,10 +24,7 @@ use ZfMetal\Restful\Transformation\Transform;
  * MainController
  *
  *
- *
- * @author
- * @license
- * @link
+ * @method ModuleOptions zfMetalRestfulOptions()
  */
 class MainController extends AbstractRestfulController
 {
@@ -300,9 +297,18 @@ class MainController extends AbstractRestfulController
                 $message = "The item was created successfully";
             }
 
+            $response = ["status" => $this->status, "message" => $message, "id" => $object->getId()];
+
+            if($this->zfMetalRestfulOptions()->getReturnItemOnUpdate()){
+                $transform = new Transform($this->getEntityLocalPolicies());
+                $item = $transform->toArray($object);
+                $response["item"] = json_encode($item);
+
+            }
+
             $this->getResponse()->setStatusCode(Response::STATUS_CODE_201);
 
-            return new JsonModel(["status" => $this->status, "message" => $message, "id" => $object->getId()]);
+            return new JsonModel($response);
 
         } catch (ValidationException $e) {
             return $this->responseValidationException($e, $this->errors);
@@ -361,9 +367,18 @@ class MainController extends AbstractRestfulController
             }
 
 
+            $response = ["status" => $this->status, "message" => $message, "id" => $object->getId()];
+
+            if($this->zfMetalRestfulOptions()->getReturnItemOnUpdate()){
+                $transform = new Transform($this->getEntityLocalPolicies());
+                $item = $transform->toArray($object);
+                $response["item"] = json_encode($item);
+
+            }
+
             $this->getResponse()->setStatusCode(Response::STATUS_CODE_200);
 
-            return new JsonModel(["status" => $this->status, "message" => $message, "id" => $object->getId()]);
+            return new JsonModel($response);
 
         } catch (ItemNotExistException $e) {
             return $this->responseSpecificException($e);
