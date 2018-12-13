@@ -2,77 +2,111 @@
 
 namespace ZfMetalTest\Restful\Controller;
 
+use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
+use Doctrine\Common\DataFixtures\Loader;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\ORM\EntityManager;
+use Zend\EventManager\EventManager;
 use Zend\ServiceManager\ServiceManager;
+use Zend\Test\PHPUnit\Controller\AbstractConsoleControllerTestCase;
 use ZfMetal\Restful\Controller\MainController;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use ZfMetalTest\DataFixture\FooLoader;
+use ZfMetalTest\Restful\Entity\Foo;
 
-class MainControllerTest extends AbstractHttpControllerTestCase
+class MainControllerTest extends AbstractConsoleControllerTestCase
 {
     protected $traceError = true;
 
     public function setUp()
     {
-        // The module configuration should still be applicable for tests.
-        // You can override configuration here with test case specific values,
-        // such as sample view templates, path stacks, module_listener_options,
-        // etc.
-        $configOverrides = [
-            'zf-metal-restful.options'  => array(
-            'entity_aliases' => array(
-                'foo' => \ZfMetalTest\Restful\Entity\Foo::class,
-            ),
-        ),];
 
-        $this->setApplicationConfig(ArrayUtils::merge(
-        // Grabbing the full application configuration:
-            include __DIR__ . '/../config/application.config.php',
-            $configOverrides
-        ));
-
+        $this->setApplicationConfig(
+            include __DIR__ . '/../config/application.config.php'
+        );
 
         parent::setUp();
 
 
     }
 
-
-    protected function configureServiceManager(ServiceManager $services)
+    public function getEm()
     {
-        $services->setAllowOverride(true);
-
-
-        $mockedEm = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getRepository'])
-            ->getMock();
-
-
-        $services->setService("doctrine.entitymanager.orm_default",$mockedEm);
-
-        $services->setAllowOverride(false);
+        return $this->getApplicationServiceLocator()->get(EntityManager::class);
     }
 
 
-    public function testIndexActionCanBeAccessed()
+    protected function addEventOnCreate()
     {
-        $this->markTestSkipped(
-            'Not finish'
-        );
+        /** @var EventManager $eventManager */
+        $eventManager = $this->getApplicationServiceLocator()->get("EventManager");
+        $eventManager->getSharedManager();
+        $eventManager->getSharedManager()->attach(MainController::class,'create_foo_before', function ($e) {
+            echo "addEventOnCreate".PHP_EOL;
+        });
 
-        $this->dispatch('/zfmr/api/foo');
-        $this->assertResponseStatusCode(200);
-        $this->assertModuleName('ZfMetal\Restful');
-        $this->assertControllerName(MainController::class);
-        $this->assertControllerClass('MainController');
-        $this->assertActionName("get");
-        $this->assertMatchedRouteName('zfmr/api');
     }
 
 
-    function getPostData()
+
+    /**
+     * Se genera la estructura de la base de datos (Creacion de tablas)
+     */
+    public function testGenerateStructure()
     {
-        return [
+
+        $this->setUseConsoleRequest(true);
+        $this->dispatch('orm:schema-tool:update --force');
+        $this->assertResponseStatusCode(0);
+        //$this->assertConsoleOutputContains("Updating database schema");
+    }
+
+    /**
+     * @depends testGenerateStructure
+     * Se popula las tablas con datos necesarios (Permisos, Roles, Usuarios y sus relaciones)
+     */
+    public function testCreateData()
+    {
+        $this->setUseConsoleRequest(false);
+        $loader = new Loader();
+        $loader->addFixture(new \ZfMetalTest\Restful\DataFixture\FooLoader());
+
+        $purger = new ORMPurger();
+        $executor = new ORMExecutor($this->getEm(), $purger);
+        $executor->execute($loader->getFixtures());
+    }
+
+
+    /**
+     * @depends testCreateData
+     * METHOD POST
+     * ACTION create
+     * DESC crear un nuevo usuario
+     */
+
+    public function testCreate()
+    {
+        $this->setUseConsoleRequest(false);
+       $this->addEventOnCreate();
+
+        $params = [
+            "title" => "test title",
         ];
+
+        $this->dispatch("/zfmr/api/foo", "POST",
+            $params);
+
+        $jsonToCompare = [
+            "status" => true,
+            'id' => 2,
+            "message" => "The item was created successfully"
+        ];
+
+        echo "VARDUMP:";
+        var_dump($this->getResponse()->getContent());
+
+        $this->assertJsonStringEqualsJsonString($this->getResponse()->getContent(), json_encode($jsonToCompare));
+        $this->assertResponseStatusCode(201);
     }
 }

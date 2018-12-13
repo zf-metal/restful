@@ -164,6 +164,7 @@ class MainController extends AbstractRestfulController
     {
         $this->em = $em;
         $this->layout()->setTerminal(true);
+
     }
 
     /**
@@ -260,8 +261,11 @@ class MainController extends AbstractRestfulController
     }
 
 
+
+
     public function create($data)
     {
+
         try {
 
             $form = FormBuilder::generate($this->getEm(), $this->getEntityClass());
@@ -271,6 +275,7 @@ class MainController extends AbstractRestfulController
             $form->bind($object);
 
             $this->getEventManager()->trigger('create_' . $this->getEntityAlias() . '_before', $this, ["object" => $object]);
+
 
             $result = FormProcess::process($this->getEm(), $form, false, $data)->getArrayResult();
 

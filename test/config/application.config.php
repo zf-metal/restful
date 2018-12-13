@@ -7,25 +7,7 @@
  */
 return [
     // Retrieve list of modules used in this application.
-    'modules' => [
-        'Zend\Mvc\Plugin\Identity',
-        'Zend\Mail',
-        'Zend\Cache',
-        'Zend\Paginator',
-        'Zend\Form',
-        'Zend\InputFilter',
-        'Zend\Filter',
-        'Zend\Mvc\Plugin\FlashMessenger',
-        'Zend\Session',
-        'Zend\Hydrator',
-        'Zend\Router',
-        'Zend\Validator',
-        'Zend\Mvc\Console',
-        //DOCTRINE
-        'DoctrineModule',
-        'DoctrineORMModule',
-        'ZfMetal\Restful',
-        ],
+    'modules' => require __DIR__ . '/modules.config.php',
 
     // These are various options for the listeners attached to the ModuleManager
     'module_listener_options' => [
@@ -34,16 +16,16 @@ return [
         // namespace, the value of that key the specific path to that module's
         // Module class.
         'module_paths' => [
+            './module',
             './vendor',
-            'ZfMetal\Restful' =>  './../../src',
         ],
 
         // An array of paths from which to glob configuration files after
         // modules are loaded. These effectively override configuration
         // provided by modules themselves. Paths may use GLOB_BRACE notation.
-//        'config_glob_paths' => [
-//            realpath(__DIR__) . '/autoload/{{,*.}global,{,*.}local}.php',
-//        ],
+        'config_glob_paths' => [
+            realpath(__DIR__) . '/autoload/{{,*.}global,{,*.}local}.php',
+        ],
 
         // Whether or not to enable a configuration cache.
         // If enabled, the merged configuration will be cached and used in
