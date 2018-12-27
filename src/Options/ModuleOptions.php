@@ -16,6 +16,8 @@ class ModuleOptions extends \Zend\Stdlib\AbstractOptions
 
     private $entityAliases = '';
 
+    private $entityAutocompleteKeys = '';
+
 
     private $returnItemOnUpdate = false;
 
@@ -44,6 +46,23 @@ class ModuleOptions extends \Zend\Stdlib\AbstractOptions
     {
         $this->returnItemOnUpdate = $returnItemOnUpdate;
     }
+
+    /**
+     * @return string
+     */
+    public function getEntityAutocompleteKeys()
+    {
+        return $this->entityAutocompleteKeys;
+    }
+
+    /**
+     * @param string $entityAutocompleteKeys
+     */
+    public function setEntityAutocompleteKeys($entityAutocompleteKeys)
+    {
+        $this->entityAutocompleteKeys = $entityAutocompleteKeys;
+    }
+
 
 
 

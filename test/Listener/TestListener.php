@@ -54,7 +54,7 @@ class TestListener implements ListenerAggregateInterface
     function log(EventInterface $event){
         /** @var Foo $object */
         $object = $event->getParam("object");
-        echo "TestListener. EventName: ".$event->getName()." Title: ".$object->getTitle().PHP_EOL;
+       // echo "TestListener. EventName: ".$event->getName()." Title: ".$object->getTitle().PHP_EOL;
 
     }
 }

@@ -28,8 +28,9 @@ return [
     //DOCTRINE
     'DoctrineModule',
     'DoctrineORMModule',
+
     'ZfMetal\Commons',
-    'ZfMetalTest\Restful',
-    'ZfMetal\Log',
     'ZfMetal\Restful',
+    'ZfMetal\Log',
+    'ZfMetalTest\Restful',
 ];

@@ -84,7 +84,7 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
      * @depends testCreateData
      * METHOD POST
      * ACTION create
-     * DESC crear un nuevo usuario
+     * DESC create item
      */
 
     public function testCreate()
@@ -96,7 +96,7 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
             "title" => "test title create",
         ];
 
-        $this->dispatch("/zfmr/api/foo", "POST",
+        $this->dispatch("/api/foo", "POST",
             $params);
 
         $jsonToCompare = [
@@ -112,21 +112,44 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
 
     /**
      * @depends testCreate
+     * METHOD GET
+     * ACTION get
+     * DESC get item
+     */
+
+    public function testGet()
+    {
+        $this->setUseConsoleRequest(false);
+
+
+        $this->dispatch("/api/foo/2", "GET");
+
+        $jsonToCompare = [
+            'id' => 2,
+            "title" => "test title create",
+        ];
+
+
+        $this->assertJsonStringEqualsJsonString($this->getResponse()->getContent(), json_encode($jsonToCompare));
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @depends testCreate
      * METHOD PUT
      * ACTION update
-     * DESC update de usuario
+     * DESC update item
      */
 
     public function testUpdate()
     {
         $this->setUseConsoleRequest(false);
-        $this->addEventOnCreate();
 
         $params = [
             "title" => "test title updated",
         ];
 
-        $this->dispatch("/zfmr/api/foo/1", "PUT",
+        $this->dispatch("/api/foo/1", "PUT",
             $params);
 
         $jsonToCompare = [
@@ -139,6 +162,9 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
         $this->assertJsonStringEqualsJsonString($this->getResponse()->getContent(), json_encode($jsonToCompare));
         $this->assertResponseStatusCode(200);
     }
+
+
+
 
     /**
      * @depends testCreateData
@@ -168,5 +194,34 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
 
         $this->assertJsonStringEqualsJsonString($this->getResponse()->getContent(), json_encode($jsonToCompare));
         $this->assertResponseStatusCode(201);
+    }
+
+
+
+    /**
+     * @depends testUpdate
+     * METHOD POST
+     * ACTION autocomplete
+     * DESC Get list for autocomplete function
+     */
+
+    public function testAutocomplete()
+    {
+        $this->setUseConsoleRequest(false);
+
+
+        $this->dispatch("/api/foo/autocomplete", "POST",
+            ["search" => "test"]
+        );
+
+        $jsonToCompare = [
+            ["key" => 1, "value" => "test title updated"],
+            ["key" => 2, "value" => "test title create"]
+        ];
+
+echo $this->getResponse()->getContent();
+
+        $this->assertJsonStringEqualsJsonString($this->getResponse()->getContent(), json_encode($jsonToCompare));
+        $this->assertResponseStatusCode(200);
     }
 }
