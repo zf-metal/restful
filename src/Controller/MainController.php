@@ -264,6 +264,8 @@ class MainController extends AbstractRestfulController
     public function create($data)
     {
 
+        $response = new \ZfMetal\Restful\Model\Response();
+
         try {
             $form = FormBuilder::generate($this->getEm(), $this->getEntityClass());
             $entityClass = $this->getEntityClass();
@@ -276,57 +278,60 @@ class MainController extends AbstractRestfulController
                 try {
                     $this->getEm()->persist($object);
                     $this->getEm()->flush();
-               } catch (\Exception $e) {
+                } catch (\Exception $e) {
                     Logger::exception($e);
                     throw new DataBaseException();
                 }
                 $this->getEventManager()->trigger('create_' . $this->getEntityAlias() . '_after', $this, ["object" => $object]);
-                $this->status = true;
+                $response->setStatus(true);
             } else {
                 foreach ($form->getMessages() as $key => $messages) {
                     foreach ($messages as $msj) {
-                        $this->errors[$key][] = $msj;
+                        $response->addError($key, $msj);
                     }
                 }
-                $this->status = false;
+                $response->setStatus(false);
             }
 
-            if (!$this->status) {
+            if (!$response->getStatus()) {
                 throw new ValidationException();
             } else {
-                $message = "The item was created successfully";
+                $response->setMessage("The item was created successfully");
             }
 
-            $response = ["status" => $this->status, "message" => $message, "id" => $object->getId()];
+            $response->setId($object->getId());
 
-            if($this->zfMetalRestfulOptions()->getReturnItemOnUpdate()){
+
+            if ($this->zfMetalRestfulOptions()->getReturnItemOnUpdate()) {
                 $transform = new Transform($this->getEntityLocalPolicies());
                 $item = $transform->toArray($object);
-                $response["item"] = json_encode($item);
+                $response->setItem(json_encode($item));
 
             }
 
             $this->getResponse()->setStatusCode(Response::STATUS_CODE_201);
 
-            return new JsonModel($response);
+            return new JsonModel($response->toArray());
 
         } catch (ValidationException $e) {
-            return $this->responseValidationException($e, $this->errors);
+            return $this->responseValidationException($e, $response->getErrors());
         } catch (DataBaseException $e) {
             return $this->responseDataBaseException($e);
         } catch (\Exception $e) {
             $this->getResponse()->setStatusCode(Response::STATUS_CODE_500);
-            $a = [
-                "status" => false,
-                "message" => $e->getMessage()
-            ];
-            return new JsonModel($a);
+            $response->setStatus(false);
+            $response->setMessage($e->getMessage());
+            return new JsonModel($response->toArray());
         }
     }
 
 
     public function update($id, $data)
     {
+
+        $response = new \ZfMetal\Restful\Model\Response();
+
+
         try {
 
             $form = FormBuilder::generate($this->getEm(), $this->getEntityClass());
@@ -350,40 +355,41 @@ class MainController extends AbstractRestfulController
                     throw new DataBaseException();
                 }
                 $this->getEventManager()->trigger('update_' . $this->getEntityAlias() . '_after', $this, ["object" => $object]);
-                $this->status = true;
+                $response->setStatus(true);
             } else {
                 foreach ($form->getMessages() as $key => $messages) {
                     foreach ($messages as $msj) {
-                        $this->errors[$key][] = $msj;
+                        $response->addError($key, $msj);
                     }
                 }
-                $this->status = false;
+                $response->setStatus(false);
             }
 
-            if (!$this->status) {
+            if (!$response->getStatus()) {
                 throw new ValidationException();
             } else {
-                $message = "The item was updated successfully";
+                $response->setMessage("The item was updated successfully");
             }
 
+            $response->setId($object->getId());
 
-            $response = ["status" => $this->status, "message" => $message, "id" => $object->getId()];
 
-            if($this->zfMetalRestfulOptions()->getReturnItemOnUpdate()){
+            if ($this->zfMetalRestfulOptions()->getReturnItemOnUpdate()) {
                 $transform = new Transform($this->getEntityLocalPolicies());
                 $item = $transform->toArray($object);
-                $response["item"] = json_encode($item);
+                $response->setItem(json_encode($item));
 
             }
 
             $this->getResponse()->setStatusCode(Response::STATUS_CODE_200);
 
-            return new JsonModel($response);
-
+            return new JsonModel($response->toArray());
+        } catch (DataBaseException $e) {
+            return $this->responseDataBaseException($e);
         } catch (ItemNotExistException $e) {
             return $this->responseSpecificException($e);
         } catch (ValidationException $e) {
-            return $this->responseValidationException($e, $result["errors"]);
+            return $this->responseValidationException($e, $response->getErrors());
         } catch (\Exception $e) {
             return $this->responseGeneralException($e);
         }
@@ -394,6 +400,8 @@ class MainController extends AbstractRestfulController
     public function delete($id)
     {
 
+        $response = new \ZfMetal\Restful\Model\Response();
+
         try {
             $object = $this->getEntityRepository()->find($id);
             if (!$object) {
@@ -401,11 +409,11 @@ class MainController extends AbstractRestfulController
             }
             $this->getEm()->remove($object);
             $this->getEm()->flush();
-            $a = [
-                "message" => "Item Delete"
-            ];
 
-            return new JsonModel($a);
+            $response->setStatus(true);
+            $response->setMessage("Item Delete");
+
+            return new JsonModel($response->toArray());
         } catch (ItemNotExistException $e) {
             return $this->responseSpecificException($e);
         } catch (\Exception $e) {
@@ -436,12 +444,12 @@ class MainController extends AbstractRestfulController
      */
     public function responseDataBaseException(\Exception $e)
     {
+
+        $response = new \ZfMetal\Restful\Model\Response();
         $this->getResponse()->setStatusCode(Response::STATUS_CODE_500);
-        $a = [
-            "status" => false,
-            "message" => $e->getMessage()
-        ];
-        return new JsonModel($a);
+        $response->setStatus(false);
+        $response->setMessage($e->getMessage());
+        return new JsonModel($response->toArray());
     }
 
     /**
@@ -452,13 +460,16 @@ class MainController extends AbstractRestfulController
     public function responseSpecificException(\Exception $e, $data = null)
     {
         $this->getResponse()->setStatusCode($e->getCode());
-        $a = [
-            "status" => false,
-            "message" => $e->getMessage()
-        ];
+
+        $response = new \ZfMetal\Restful\Model\Response();
+        $response->setStatus(false);
+        $response->setMessage($e->getMessage());
+
 
         if ($data) {
-            $a = array_merge_recursive($a, $data);
+            $a = array_merge_recursive($response->toArray(), $data);
+        } else {
+            $a = $response->toArray();
         }
 
         $jm = new JsonModel($a);
@@ -473,14 +484,14 @@ class MainController extends AbstractRestfulController
     public function responseValidationException(\Exception $e, $errors = null)
     {
         $this->getResponse()->setStatusCode($e->getCode());
-        $a = [
-            "status" => false,
-            "message" => $e->getMessage(),
-            "errors" => $errors
-        ];
+        $this->getResponse()->setStatusCode(Response::STATUS_CODE_500);
 
-        $jm = new JsonModel($a);
-        return $jm;
+        $response = new \ZfMetal\Restful\Model\Response();
+        $response->setStatus(false);
+        $response->setMessage($e->getMessage());
+        $response->setErrors($errors);
+
+        return new JsonModel($response->toArray());
     }
 
 }

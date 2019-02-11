@@ -22,9 +22,9 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
     public function setUp()
     {
 
-        ini_set('xdebug.var_display_max_depth','10');
-        ini_set('xdebug.var_display_max_children','256');
-        ini_set('xdebug.var_display_max_data','1024');
+        ini_set('xdebug.var_display_max_depth', '10');
+        ini_set('xdebug.var_display_max_children', '256');
+        ini_set('xdebug.var_display_max_data', '1024');
         $this->setApplicationConfig(
             include __DIR__ . '/../config/application.config.php'
         );
@@ -164,8 +164,6 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
     }
 
 
-
-
     /**
      * @depends testCreateData
      * METHOD POST
@@ -197,7 +195,6 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
     }
 
 
-
     /**
      * @depends testUpdate
      * METHOD POST
@@ -219,7 +216,7 @@ class MainControllerTest extends AbstractConsoleControllerTestCase
             ["key" => 2, "value" => "test title create"]
         ];
 
-echo $this->getResponse()->getContent();
+        //echo $this->getResponse()->getContent();
 
         $this->assertJsonStringEqualsJsonString($this->getResponse()->getContent(), json_encode($jsonToCompare));
         $this->assertResponseStatusCode(200);
