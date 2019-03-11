@@ -3,6 +3,7 @@
 namespace ZfMetal\Restful\Controller;
 
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Zend\Form\Form;
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
@@ -64,6 +65,33 @@ class MainController extends AbstractRestfulController
     protected $status = false;
 
     protected $errors = [];
+
+
+    /**
+     * @var Form
+     */
+    protected $form = null;
+
+    /**
+     * @return Form
+     */
+    public function getForm()
+    {
+        if(!$this->form){
+            $this->form = FormBuilder::generate($this->getEm(), $this->getEntityClass());
+        }
+        return $this->form;
+    }
+
+    /**
+     * @param Form $form
+     */
+    public function setForm($form)
+    {
+        $this->form = $form;
+    }
+
+
 
     public function getEm()
     {
@@ -267,13 +295,12 @@ class MainController extends AbstractRestfulController
         $response = new \ZfMetal\Restful\Model\Response();
 
         try {
-            $form = FormBuilder::generate($this->getEm(), $this->getEntityClass());
             $entityClass = $this->getEntityClass();
             $object = new $entityClass;
-            $form->bind($object);
-            $form->setData($data);
+            $this->getForm()->bind($object);
+            $this->getForm()->setData($data);
 
-            if ($form->isValid()) {
+            if ($this->getForm()->isValid()) {
                 $this->getEventManager()->trigger('create_' . $this->getEntityAlias() . '_before', $this, ["object" => $object]);
                 try {
                     $this->getEm()->persist($object);
@@ -285,7 +312,7 @@ class MainController extends AbstractRestfulController
                 $this->getEventManager()->trigger('create_' . $this->getEntityAlias() . '_after', $this, ["object" => $object]);
                 $response->setStatus(true);
             } else {
-                foreach ($form->getMessages() as $key => $messages) {
+                foreach ($this->getForm()->getMessages() as $key => $messages) {
                     foreach ($messages as $msj) {
                         $response->addError($key, $msj);
                     }
@@ -334,7 +361,6 @@ class MainController extends AbstractRestfulController
 
         try {
 
-            $form = FormBuilder::generate($this->getEm(), $this->getEntityClass());
 
             $object = $this->getEntityRepository()->find($id);
             if (!$object) {
@@ -342,10 +368,10 @@ class MainController extends AbstractRestfulController
             }
 
 
-            $form->bind($object);
-            $form->setData($data);
+            $this->getForm()->bind($object);
+            $this->getForm()->setData($data);
 
-            if ($form->isValid()) {
+            if ($this->getForm()->isValid()) {
                 $this->getEventManager()->trigger('update_' . $this->getEntityAlias() . '_before', $this, ["object" => $object]);
                 try {
                     $this->getEm()->persist($object);
@@ -357,7 +383,7 @@ class MainController extends AbstractRestfulController
                 $this->getEventManager()->trigger('update_' . $this->getEntityAlias() . '_after', $this, ["object" => $object]);
                 $response->setStatus(true);
             } else {
-                foreach ($form->getMessages() as $key => $messages) {
+                foreach ($this->getForm()->getMessages() as $key => $messages) {
                     foreach ($messages as $msj) {
                         $response->addError($key, $msj);
                     }
