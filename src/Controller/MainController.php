@@ -332,7 +332,7 @@ class MainController extends AbstractRestfulController
             if ($this->zfMetalRestfulOptions()->getReturnItemOnUpdate()) {
                 $transform = new Transform($this->getEntityLocalPolicies());
                 $item = $transform->toArray($object);
-                $response->setItem(json_encode($item));
+                $response->setItem($item);
 
             }
 
@@ -403,7 +403,7 @@ class MainController extends AbstractRestfulController
             if ($this->zfMetalRestfulOptions()->getReturnItemOnUpdate()) {
                 $transform = new Transform($this->getEntityLocalPolicies());
                 $item = $transform->toArray($object);
-                $response->setItem(json_encode($item));
+                $response->setItem($item);
 
             }
 
