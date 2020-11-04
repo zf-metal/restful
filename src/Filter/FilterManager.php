@@ -24,7 +24,8 @@ class FilterManager
         $this->em = $em;
     }
 
-    public function getEntityRepository($entityClassName){
+    public function getEntityRepository($entityClassName)
+    {
         return $this->getEm()->getRepository($entityClassName);
     }
 
@@ -34,33 +35,36 @@ class FilterManager
      * @param array $query
      * @return array
      */
-    public function filterEntityByRequestQuery($entityClassName,\Zend\Stdlib\ParametersInterface $query)
+    public function filterEntityByRequestQuery($entityClassName, \Zend\Stdlib\ParametersInterface $query)
     {
 
         $qb = $this->getEntityRepository($entityClassName)->createQueryBuilder('u')->select('u');
 
         //PAGINATION
-        if($query["page"] && is_numeric($query["page"])){
-            $num = ($query["limit"] && is_numeric($query["limit"]))?$query["limit"]:10;
-            $qb->setFirstResult($query["page"] * $num);
-            unset($query["page"]);
+        if ($query["page"] && is_numeric($query["page"])) {
+            if ($query["page"] > 1) {
+                $num = ($query["limit"] && is_numeric($query["limit"])) ? $query["limit"] : 10;
+                $qb->setFirstResult(($query["page"] - 1) * $num);
+                unset($query["page"]);
+            }
+
         }
 
         //LIMIT
-        if($query["limit"] && is_numeric($query["limit"])){
+        if ($query["limit"] && is_numeric($query["limit"])) {
             $qb->setMaxResults($query["limit"]);
             unset($query["limit"]);
         }
 
         //ORDER
-        if($query["orderby"]){
-            if($query["orderby"] == "DESC" || $query["orderby"] == "ASC"){
+        if ($query["orderby"]) {
+            if ($query["orderby"] == "DESC" || $query["orderby"] == "ASC") {
                 $order = $query["orderby"];
-            }else{
+            } else {
                 $order = "ASC";
             }
 
-            $qb->orderBy('u.'.$query["orderby"],$order);
+            $qb->orderBy('u.' . $query["orderby"], $order);
             unset($query["orderby"]);
         }
 
@@ -81,7 +85,6 @@ class FilterManager
     }
 
 
-
     public function getEm()
     {
         return $this->em;
@@ -91,10 +94,6 @@ class FilterManager
     {
         $this->em = $em;
     }
-
-
-
-
 
 
 }
