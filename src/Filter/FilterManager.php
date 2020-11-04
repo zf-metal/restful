@@ -41,18 +41,19 @@ class FilterManager
         $qb = $this->getEntityRepository($entityClassName)->createQueryBuilder('u')->select('u');
 
         //PAGINATION
-        if ($query["page"] && is_numeric($query["page"])) {
-            if ($query["page"] > 1) {
+        if ($query["page"]) {
+            if (is_numeric($query["page"]) && $query["page"] > 1) {
                 $num = ($query["limit"] && is_numeric($query["limit"])) ? $query["limit"] : 10;
                 $qb->setFirstResult(($query["page"] - 1) * $num);
-                unset($query["page"]);
             }
-
+            unset($query["page"]);
         }
 
         //LIMIT
-        if ($query["limit"] && is_numeric($query["limit"])) {
-            $qb->setMaxResults($query["limit"]);
+        if ($query["limit"] ) {
+            if(is_numeric($query["limit"])){
+                $qb->setMaxResults($query["limit"]);
+            }
             unset($query["limit"]);
         }
 
