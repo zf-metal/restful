@@ -64,13 +64,14 @@ class FilterManager
 
             if ($query["orderdirection"] == "DESC" || $query["orderdirection"] == "ASC") {
                 $orderDirection = $query["orderdirection"];
+                unset($query["orderdirection"]);
             } else {
                 $orderDirection = "ASC";
             }
 
             $qb->orderBy('u.' . $orderBy, $orderDirection);
             unset($query["orderby"]);
-            unset($query["orderdirection"]);
+
         }
 
         //FILTERS
