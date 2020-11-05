@@ -59,14 +59,18 @@ class FilterManager
 
         //ORDER
         if ($query["orderby"]) {
-            if ($query["orderby"] == "DESC" || $query["orderby"] == "ASC") {
-                $order = $query["orderby"];
+
+            $orderBy =  $query["orderby"];
+
+            if ($query["orderdirection"] == "DESC" || $query["orderdirection"] == "ASC") {
+                $orderDirection = $query["orderdirection"];
             } else {
-                $order = "ASC";
+                $orderDirection = "ASC";
             }
 
-            $qb->orderBy('u.' . $query["orderby"], $order);
+            $qb->orderBy('u.' . $orderBy, $orderDirection);
             unset($query["orderby"]);
+            unset($query["orderdirection"]);
         }
 
         //FILTERS
